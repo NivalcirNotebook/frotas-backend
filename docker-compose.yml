@@ -1,0 +1,65 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: frotas-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: frotas_admin
+      POSTGRES_PASSWORD: frotas_senha_segura_2024
+      POSTGRES_DB: frotas_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U frotas_admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - frotas-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: frotas-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - DATABASE_URL=postgresql://frotas_admin:frotas_senha_segura_2024@postgres:5432/frotas_db?schema=public
+      - JWT_SECRET=${JWT_SECRET:-chave_secreta_casa_linda_frotas_2024}
+      - LOGIN_USERNAME=${LOGIN_USERNAME:-admin}
+      - LOGIN_PASSWORD=${LOGIN_PASSWORD:-casa@linda2024}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - frotas-network
+    volumes:
+      - ./data:/app/data
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: frotas-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - frotas-network
+    environment:
+      - REACT_APP_API_URL=http://localhost:3001
+
+volumes:
+  postgres_data:
+
+networks:
+  frotas-network:
+    driver: bridge

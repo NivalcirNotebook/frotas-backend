@@ -1,0 +1,243 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Veiculo {
+  id        Int      @id @default(autoincrement())
+  marca     String
+  modelo    String
+  placa     String   @unique
+  ano       Int
+  kmAtual   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  abastecimentos Abastecimento[]
+  manutencoes    Manutencao[]
+  trocasPneus    TrocaPneu[]
+  trocasOleo     TrocaOleo[]
+  revisoes       Revisao[]
+  viagens        Viagem[]
+  multas         Multa[]
+
+  @@index([placa])
+  @@map("veiculos")
+}
+
+model Motorista {
+  id            Int      @id @default(autoincrement())
+  nome          String
+  cnh           String   @unique
+  telefone      String?
+  email         String?
+  ativo         Boolean  @default(true)
+  dataCadastro  String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  abastecimentos Abastecimento[]
+  manutencoes    Manutencao[]
+  trocasPneus    TrocaPneu[]
+  trocasOleo     TrocaOleo[]
+  revisoes       Revisao[]
+  viagens        Viagem[]
+  multas         Multa[]
+
+  @@index([cnh])
+  @@index([ativo])
+  @@map("motoristas")
+}
+
+model Viagem {
+  id              Int      @id @default(autoincrement())
+  motoristaId     Int
+  veiculoId       Int
+  dataHoraSaida   String
+  dataHoraChegada String
+  data            String
+  horarioSaida    String
+  horarioChegada  String
+  kmSaida         Float
+  kmChegada       Float
+  kmPercorridos   Float
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  motorista Motorista @relation(fields: [motoristaId], references: [id], onDelete: Cascade)
+  veiculo   Veiculo   @relation(fields: [veiculoId], references: [id], onDelete: Cascade)
+
+  @@index([motoristaId])
+  @@index([veiculoId])
+  @@index([data])
+  @@map("viagens")
+}
+
+model Abastecimento {
+  id            Int      @id @default(autoincrement())
+  veiculoId     Int
+  motoristaId   Int?
+  data          String
+  km            Int
+  litros        Float
+  valorTotal    Float
+  valorPorLitro Float
+  createdAt     DateTime @default(now())
+
+  veiculo   Veiculo    @relation(fields: [veiculoId], references: [id], onDelete: Cascade)
+  motorista Motorista? @relation(fields: [motoristaId], references: [id], onDelete: SetNull)
+
+  @@index([veiculoId])
+  @@index([motoristaId])
+  @@index([data])
+  @@map("abastecimentos")
+}
+
+model Manutencao {
+  id          Int      @id @default(autoincrement())
+  veiculoId   Int
+  motoristaId Int?
+  data        String
+  km          Int
+  tipo        String
+  descricao   String
+  valorTotal  Float
+  createdAt   DateTime @default(now())
+
+  veiculo   Veiculo    @relation(fields: [veiculoId], references: [id], onDelete: Cascade)
+  motorista Motorista? @relation(fields: [motoristaId], references: [id], onDelete: SetNull)
+
+  @@index([veiculoId])
+  @@index([motoristaId])
+  @@index([data])
+  @@map("manutencoes")
+}
+
+model TrocaPneu {
+  id          Int      @id @default(autoincrement())
+  veiculoId   Int
+  motoristaId Int?
+  data        String
+  km          Int
+  eixo        String   @default("")
+  posicao     String   @default("")
+  quantidade  Int
+  valorTotal  Float
+  tipo        String
+  createdAt   DateTime @default(now())
+
+  veiculo   Veiculo    @relation(fields: [veiculoId], references: [id], onDelete: Cascade)
+  motorista Motorista? @relation(fields: [motoristaId], references: [id], onDelete: SetNull)
+
+  @@index([veiculoId])
+  @@index([motoristaId])
+  @@index([data])
+  @@map("trocas_pneus")
+}
+
+model TrocaOleo {
+  id                Int      @id @default(autoincrement())
+  veiculoId         Int
+  motoristaId       Int?
+  data              String
+  km                Int
+  tipoOleo          String
+  quantidade        Float
+  filtroOleo        Boolean  @default(false)
+  filtroAr          Boolean  @default(false)
+  filtroCombustivel Boolean  @default(false)
+  valorTotal        Float
+  observacoes       String   @default("")
+  createdAt         DateTime @default(now())
+
+  veiculo   Veiculo    @relation(fields: [veiculoId], references: [id], onDelete: Cascade)
+  motorista Motorista? @relation(fields: [motoristaId], references: [id], onDelete: SetNull)
+
+  @@index([veiculoId])
+  @@index([motoristaId])
+  @@index([data])
+  @@map("trocas_oleo")
+}
+
+model Revisao {
+  id              Int      @id @default(autoincrement())
+  veiculoId       Int
+  motoristaId     Int?
+  data            String
+  km              Int
+  tipoRevisao     String
+  itensRevisados  Json     @default("{}")
+  observacoes     String   @default("")
+  valorTotal      Float
+  proximaRevisao  Int?
+  createdAt       DateTime @default(now())
+
+  veiculo   Veiculo    @relation(fields: [veiculoId], references: [id], onDelete: Cascade)
+  motorista Motorista? @relation(fields: [motoristaId], references: [id], onDelete: SetNull)
+
+  @@index([veiculoId])
+  @@index([motoristaId])
+  @@index([data])
+  @@map("revisoes")
+}
+
+model Multa {
+  id             Int          @id @default(autoincrement())
+  veiculoId      Int
+  motoristaId    Int?
+  dataInfracao   String
+  tipoMulta      String
+  descricao      String
+  valorMulta     Float
+  pontosCNH      Int          @default(0)
+  numeroAuto     String
+  local          String
+  status         StatusMulta  @default(PENDENTE)
+  dataVencimento String
+  dataPagamento  String?
+  valorPago      Float?
+  observacoes    String       @default("")
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  veiculo   Veiculo    @relation(fields: [veiculoId], references: [id], onDelete: Cascade)
+  motorista Motorista? @relation(fields: [motoristaId], references: [id], onDelete: SetNull)
+
+  @@index([veiculoId])
+  @@index([motoristaId])
+  @@index([dataInfracao])
+  @@index([status])
+  @@map("multas")
+}
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  nome      String
+  email     String?  @unique
+  role      Role     @default(MOTORISTA)
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([username])
+  @@index([role])
+  @@map("usuarios")
+}
+
+enum StatusMulta {
+  PENDENTE
+  PAGA
+  EM_RECURSO
+  CANCELADA
+}
+
+enum Role {
+  ADMIN
+  MOTORISTA
+}

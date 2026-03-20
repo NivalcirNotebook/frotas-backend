@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "nome": "João",
+    "cnh": "12345678",
+    "telefone": "19984402255",
+    "email": "nivalcir.souza@hotmail.com",
+    "ativo": false,
+    "dataCadastro": "2026-03-08"
+  },
+  {
+    "id": 2,
+    "nome": "João",
+    "cnh": "23456780",
+    "telefone": "19984402255",
+    "email": "nivalcir.souza@hotmail.com",
+    "ativo": true,
+    "dataCadastro": "2026-03-10"
+  }
+]

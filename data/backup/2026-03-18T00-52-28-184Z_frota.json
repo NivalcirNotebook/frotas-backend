@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1,
+    "marca": "Mercedes",
+    "modelo": "Acello",
+    "placa": "ABC1234",
+    "ano": 2025,
+    "kmAtual": 1700,
+    "registros": {
+      "abastecimentos": [
+        {
+          "data": "2026-03-13",
+          "km": 1700,
+          "litros": 950,
+          "valorTotal": 1450,
+          "valorPorLitro": 1.5263157894736843,
+          "motoristaId": 2
+        }
+      ],
+      "trocaPneus": [
+        {
+          "data": "2026-03-13",
+          "km": 1800,
+          "eixo": "Dianteiro",
+          "posicao": "Esquerdo",
+          "quantidade": 1,
+          "valorTotal": 1800,
+          "tipo": "Goodyear 1100/80/22,5",
+          "motoristaId": 2
+        }
+      ],
+      "manutencoes": [
+        {
+          "data": "2026-03-11",
+          "km": 1250,
+          "tipo": "Revisão",
+          "descricao": "Revisão geral do caminhão",
+          "valorTotal": 1700,
+          "motoristaId": 2
+        }
+      ],
+      "trocasOleo": [
+        {
+          "data": "2026-03-13",
+          "km": 10000,
+          "tipoOleo": "5W30 Sintético",
+          "quantidade": 9,
+          "filtroOleo": true,
+          "filtroAr": true,
+          "filtroCombustivel": true,
+          "valorTotal": 1200,
+          "observacoes": "",
+          "motoristaId": 2
+        }
+      ],
+      "revisoes": [
+        {
+          "data": "2026-03-13",
+          "km": 40000,
+          "tipoRevisao": "Preventiva",
+          "itensRevisados": {
+            "freios": true,
+            "suspensao": true,
+            "direcao": true,
+            "pneus": true,
+            "luzes": true,
+            "fluidos": true,
+            "correias": true,
+            "bateria": true,
+            "outros": true
+          },
+          "observacoes": "",
+          "valorTotal": 2500,
+          "proximaRevisao": 59998,
+          "motoristaId": 2
+        }
+      ]
+    }
+  }
+]
