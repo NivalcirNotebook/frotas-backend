@@ -4,15 +4,15 @@ services:
     container_name: frotas-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: frotas_admin
-      POSTGRES_PASSWORD: frotas_senha_segura_2024
-      POSTGRES_DB: frotas_db
+      POSTGRES_USER: ${POSTGRES_USER:-frotas_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-frotas_senha_segura_2024}
+      POSTGRES_DB: ${POSTGRES_DB:-frotas_db}
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U frotas_admin"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-frotas_admin}"]
       interval: 10s
       timeout: 5s
       retries: 5
